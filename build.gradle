@@ -1,0 +1,91 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'eclipse'
+    id 'maven-publish'
+}
+
+version = '1.0.0'
+group = 'bin.cnpchostility'
+archivesBaseName = 'CNPC-hostility-compatible-1.20.1Forge-V1.0.0'
+
+tasks.named('jar', Jar) {
+    archiveFileName = 'CNPC-hostility-compatible-1.20.1Forge-V1.0.0.jar'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.debug.export', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                cnpchostility {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                cnpchostility {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'cnpchostility', '--all', '--output', file('src/generated/resources/')
+            mods {
+                cnpchostility {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    mavenCentral()
+    flatDir { dirs 'libs' }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.6'
+    compileOnly fg.deobf(files('libs/CustomNPCs-1.20.1-GBPort-Unofficial-1.20.1.20260711.jar'))
+    compileOnly fg.deobf(files('libs/[莱特兰-恶意] l2hostility-2.5.19.jar'))
+    compileOnly fg.deobf(files('libs/l2library-2.5.3.jar'))
+    compileOnly fg.deobf(files('libs/[莱特兰-扩充] l2complements-2.6.1.jar'))
+    compileOnly files('libs/L2Hostility-main/libs/Registrate-MC1.20-1.3.11.jar')
+    compileOnly fg.deobf(files('libs/curios-forge-5.14.1+1.20.1.jar'))
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    add sourceSets.main, 'cnpchostility.refmap.json'
+    config 'mixins.cnpchostility.json'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:-processing'
+}

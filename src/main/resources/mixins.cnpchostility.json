@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "bin.cnpchostility.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "cnpchostility.refmap.json",
+  "mixins": [
+    "MixinMobTraitCap",
+    "MixinGeneralCapabilityHolder",
+    "MixinEntityNPCInterface",
+    "MixinEntityNPCInterface_Effects",
+    "MixinInvisibleTrait",
+    "MixinFieryTrait",
+    "MixinMasterTrait",
+    "MixinUndyingTrait"
+  ],
+  "client": [
+    "MixinRenderNPCInterface",
+    "MixinGuiNpcStats",
+    "AccessorGuiNPCInterface2"
+  ],
+  "server": []
+}

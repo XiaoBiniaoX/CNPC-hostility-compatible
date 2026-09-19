@@ -1,0 +1,40 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+
+license="MIT"
+
+[[mods]]
+modId="cnpchostility"
+version="1.0.0"
+displayName="CNPC恶意附属"
+displayURL="https://space.bilibili.com/353609880"
+authors="XiaoBiniaoX"
+description='''为Custom NPCs添加莱特兰·恶意词条兼容。创造模式下用词条物品右键NPC安装词条，Shift+右键卸下。'''
+
+[[dependencies.cnpchostility]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.cnpchostility]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.cnpchostility]]
+    modId="customnpcs"
+    mandatory=true
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.cnpchostility]]
+    modId="l2hostility"
+    mandatory=true
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

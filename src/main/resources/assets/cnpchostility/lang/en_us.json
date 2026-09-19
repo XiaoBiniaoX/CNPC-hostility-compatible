@@ -1,0 +1,14 @@
+{
+  "message.cnpchostility.add_success": "§aInstalled trait %1$s on %2$s",
+  "message.cnpchostility.add_success_lv": "§aInstalled trait %1$s on %2$s (level 1/%3$s)",
+  "message.cnpchostility.add_upgrade": "§a%2$s trait %1$s upgraded: %3$s → %4$s",
+  "message.cnpchostility.add_max": "§6%2$s trait %1$s is at max level (%3$s)",
+  "message.cnpchostility.remove_success": "§aRemoved trait %1$s (was level %3$s) from %2$s",
+  "message.cnpchostility.remove_fail": "§c%2$s does not have trait %1$s",
+  "message.cnpchostility.split_denied": "§cCannot apply Split trait to NPC!",
+  "gui.cnpchostility.traits": "Traits",
+  "gui.cnpchostility.traits.title": "NPC Trait Management",
+  "gui.cnpchostility.traits.disabled": "This trait cannot be applied to NPCs",
+  "gui.cnpchostility.traits.remove_hint": "Shift + left-click to remove this trait",
+  "gui.cnpchostility.traits.default_desc": "Applies this trait's mob effect to the NPC; higher levels strengthen the effect."
+}
