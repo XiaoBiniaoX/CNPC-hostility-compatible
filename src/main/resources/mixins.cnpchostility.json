@@ -6,17 +6,23 @@
   "refmap": "cnpchostility.refmap.json",
   "mixins": [
     "MixinMobTraitCap",
+    "MixinLHAttackListener",
+    "MixinKillerAuraTrait",
     "MixinGeneralCapabilityHolder",
     "MixinEntityNPCInterface",
     "MixinEntityNPCInterface_Effects",
     "MixinInvisibleTrait",
     "MixinFieryTrait",
     "MixinMasterTrait",
-    "MixinUndyingTrait"
+    "MixinUndyingTrait",
+    "MixinFallenCloneTrait",
+    "MixinFallenMimicTrait"
   ],
   "client": [
+    "MixinClientEvents",
     "MixinRenderNPCInterface",
     "MixinGuiNpcStats",
+    "MixinCustomNpcClientEventHandler",
     "AccessorGuiNPCInterface2"
   ],
   "server": []

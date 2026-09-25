@@ -14,19 +14,28 @@ import net.minecraftforge.registries.ForgeRegistries;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.entity.EntityNPCInterface;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GuiNpcTraits extends GuiNPCInterface {
     private static final int ROW_HEIGHT = 24;
     private static final int COLUMNS = 2;
     private static final int COLUMN_GAP = 4;
+    private static final Path FAVORITES_FILE = Minecraft.getInstance().gameDirectory.toPath()
+            .resolve("config").resolve("cnpchostility-trait-favorites.txt");
     private final EntityNPCInterface npc;
     private final List<MobTrait> traits = new ArrayList<>();
     private final Map<ResourceLocation, Integer> selected = new LinkedHashMap<>();
+    private final Set<ResourceLocation> favorites = new HashSet<>();
     private int scroll;
 
     public GuiNpcTraits(EntityNPCInterface npc) {
@@ -35,9 +44,10 @@ public class GuiNpcTraits extends GuiNPCInterface {
         this.imageWidth = 320;
         this.imageHeight = 220;
         this.drawDefaultBackground = false;
-        dev.xkmc.l2hostility.init.registrate.LHTraits.TRAITS.get().getValues().stream()
-                .sorted(Comparator.comparing(MobTrait::getID))
+        loadFavorites();
+        dev.xkmc.l2hostility.init.registrate.LHTraits.TRAITS.get().getValues()
                 .forEach(this.traits::add);
+        sortTraits();
         npc.getCapability(MobTraitCap.CAPABILITY).ifPresent(cap -> cap.traits.forEach((trait, level) -> {
             ResourceLocation id = ResourceLocation.tryParse(trait.getID());
             if (id != null) {
@@ -75,7 +85,7 @@ public class GuiNpcTraits extends GuiNPCInterface {
             }
             boolean disabled = isDisabled(id);
             boolean active = this.selected.containsKey(id);
-            int border = active ? 0xFFFFFFFF : 0xFFA0A0A0;
+            int border = this.favorites.contains(id) ? 0xFFFFD700 : active ? 0xFFFFFFFF : 0xFFA0A0A0;
             int color = disabled ? 0xFF202020 : active ? 0xFF6A6A6A : 0xFFC6C6C6;
             graphics.fill(x, y, x + columnWidth, y + 21, border);
             graphics.fill(x + 1, y + 1, x + columnWidth - 1, y + 20, color);
@@ -125,6 +135,14 @@ public class GuiNpcTraits extends GuiNPCInterface {
             if (index >= 0 && index < this.traits.size()) {
                 ResourceLocation id = ResourceLocation.tryParse(this.traits.get(index).getID());
                 if (id != null && !isDisabled(id)) {
+                    if (button == 0 && Screen.hasAltDown()) {
+                        if (!this.favorites.add(id)) {
+                            this.favorites.remove(id);
+                        }
+                        saveFavorites();
+                        sortTraits();
+                        return true;
+                    }
                     if (button == 0 && Screen.hasShiftDown()) {
                         this.selected.remove(id);
                         CNPCNetwork.saveNpcTraits(this.npc.getId(), this.selected);
@@ -175,8 +193,44 @@ public class GuiNpcTraits extends GuiNPCInterface {
                 && ("split".equals(id.getPath()) || "growth".equals(id.getPath()));
     }
 
+    private void sortTraits() {
+        this.traits.sort(Comparator
+                .comparingInt((MobTrait trait) -> {
+                    ResourceLocation id = ResourceLocation.tryParse(trait.getID());
+                    if (id != null && isDisabled(id)) {
+                        return 2;
+                    }
+                    return id != null && this.favorites.contains(id) ? 0 : 1;
+                })
+                .thenComparing(MobTrait::getID));
+    }
+
     private static ItemStack traitItem(ResourceLocation id) {
         var item = ForgeRegistries.ITEMS.getValue(id);
         return item == null ? ItemStack.EMPTY : new ItemStack(item);
+    }
+
+    private void loadFavorites() {
+        if (!Files.isRegularFile(FAVORITES_FILE)) {
+            return;
+        }
+        try {
+            for (String line : Files.readAllLines(FAVORITES_FILE, StandardCharsets.UTF_8)) {
+                ResourceLocation id = ResourceLocation.tryParse(line.trim());
+                if (id != null) {
+                    this.favorites.add(id);
+                }
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void saveFavorites() {
+        try {
+            Files.createDirectories(FAVORITES_FILE.getParent());
+            List<String> ids = this.favorites.stream().map(ResourceLocation::toString).sorted().toList();
+            Files.write(FAVORITES_FILE, ids, StandardCharsets.UTF_8);
+        } catch (IOException ignored) {
+        }
     }
 }

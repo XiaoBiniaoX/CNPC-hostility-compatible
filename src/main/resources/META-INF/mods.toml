@@ -5,7 +5,7 @@ license="MIT"
 
 [[mods]]
 modId="cnpchostility"
-version="1.0.0"
+version="1.1.0"
 displayName="CNPC恶意附属"
 displayURL="https://space.bilibili.com/353609880"
 authors="XiaoBiniaoX"
@@ -36,5 +36,19 @@ description='''为Custom NPCs添加莱特兰·恶意词条兼容。创造模式�
     modId="l2hostility"
     mandatory=true
     versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.cnpchostility]]
+    modId="l2complements"
+    mandatory=true
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.cnpchostility]]
+    modId="fallen_traits"
+    mandatory=false
+    versionRange="[1.20.1-1.0.0,)"
     ordering="AFTER"
     side="BOTH"
